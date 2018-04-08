@@ -129,3 +129,4 @@ int main()
       cout<<pid[i]<<"	 "<<fe[i]<<"	 "<<ft[i]<<"	  "<<ft[i]-burstTime[i]-arrivalTime[i]<<endl;
     return 0;
 }
+
