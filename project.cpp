@@ -4,25 +4,20 @@
 
 using namespace std;
 
-#define MAX_SIZE 1000
-#define TIME_QUANTUM 4
+#define MAX 1000
+#define QUANTA 4
 
-int flag[MAX_SIZE],
-arrivalTime[MAX_SIZE],//ARRIVAL TIME
-burstTime[MAX_SIZE],//BURST TIME
-pt[MAX_SIZE],//PRIORITY
-rt[MAX_SIZE],//RESPONSE TIME
-ft[MAX_SIZE],//FINISH TIME
-fe[MAX_SIZE],
-fe_flag[MAX_SIZE],
-pid[MAX_SIZE],
-tms,
-qt[MAX_SIZE];
+int flag[MAX],at[MAX],bt[MAX],pt[MAX],rt[MAX],ft[MAX],fe[MAX],fe_flag[MAX],pid[MAX],tms,qt[MAX];
 
-queue<int> q;  //RoundRobin queue
+//at arrival time
+//bt burst time
+//rt Response Time
+//pt priority
+//pid process id
 
+queue<int> q;  //RR queue
 
-void RoundRobin()
+void RR()
 {
       if(!q.empty())
       {
@@ -41,7 +36,7 @@ void RoundRobin()
 				q.push(q.front());
 				q.pop();
           		}
-        }
+        	}
       }
 }
 
@@ -55,22 +50,20 @@ int main()
 	printf("\n<PID>  <AT>    <BT>   <PRI>\n");
     for(i=0;i<n;i++)
     {
-    		scanf("%d %d %d %d",&pid[i],&arrivalTime[i],&burstTime[i],&pt[i]);
-    		if(arrivalTime[i]>large)
-			{
-				large=arrivalTime[i];
-			}
-    		sum+=burstTime[i];
-    		rt[i]=burstTime[i];
+    		scanf("%d %d %d %d",&pid[i],&at[i],&bt[i],&pt[i]);
+    		if(at[i]>large)
+    		  	large=at[i];
+    		sum+=bt[i];
+    		rt[i]=bt[i];
     }
-    min=MAX_SIZE;
+    min=MAX;
     for(tms=0;!q.empty() || tms<=sum+large ;tms++)
     {
-      min=MAX_SIZE;
+      min=MAX;
       smallest=-1;
       for(i=0;i<n;i++)
       {
-      	if(arrivalTime[i]<=tms && pt[i]< min && rt[i]>0 && !flag[i])
+      	if(at[i]<=tms && pt[i]< min && rt[i]>0 && !flag[i])
       	{
       		min=pt[i];
           	smallest=i;
@@ -84,7 +77,7 @@ int main()
           	flag[last_smallest]=1;
         }
         last_smallest=-1;
-        RoundRobin(); // calling of method RoundRobin Queue will implements from here
+        RR();
         continue;
       }
       else if(smallest!=-1 && !q.empty() && last_smallest==-1)
@@ -97,7 +90,7 @@ int main()
       }
       if(smallest!=-1 && !fe_flag[smallest])
       {
-      	fe[smallest]=tms-arrivalTime[smallest];
+      	fe[smallest]=tms-at[smallest];
       	fe_flag[smallest]=1;
       }
       if( smallest!=last_smallest && last_smallest!=-1 && !flag[last_smallest])
@@ -108,9 +101,9 @@ int main()
       if(smallest !=-1)
       	rt[smallest]--;
       
-      if((smallest !=-1) && ((rt[smallest]==0) ||(burstTime[smallest]-rt[smallest])==TIME_QUANTUM))
+      if((smallest !=-1) && ((rt[smallest]==0) ||(bt[smallest]-rt[smallest])==QUANTA))
       {
-      	if((burstTime[smallest]-rt[smallest])==TIME_QUANTUM && rt[smallest]!=0)
+      	if((bt[smallest]-rt[smallest])==QUANTA && rt[smallest]!=0)
       	{
       		flag[smallest]=1;
       		q.push(smallest);
@@ -126,6 +119,6 @@ int main()
 	printf("\n============OUTPUT==========\n");
 	printf("\n<PID>   <RT>	<FT>	<WT>\n");
    for(int i=0;i<n;i++)
-      cout<<pid[i]<<"	 "<<fe[i]<<"	 "<<ft[i]<<"	  "<<ft[i]-burstTime[i]-arrivalTime[i]<<endl;
+      cout<<pid[i]<<"	 "<<fe[i]<<"	 "<<ft[i]<<"	  "<<ft[i]-bt[i]-at[i]<<endl;
     return 0;
 }
